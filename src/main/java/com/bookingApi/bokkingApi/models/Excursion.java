@@ -1,24 +1,36 @@
 package com.bookingApi.bokkingApi.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+import java.util.UUID;
 
 @Entity(name = "excursions")
 @Data
+@IdClass(pk_excursionId.class)
 public class Excursion {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
 
-    private long hotel_id;
+    private String id;
+    @Id
+    private String hotel_id;
 
     private String description;
+
 
     private String name;
 
     private long price;
+}
+
+
+@NoArgsConstructor
+@EqualsAndHashCode
+class pk_excursionId implements Serializable{
+    private long id;
+    private String hotel_id;
 }

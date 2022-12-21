@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.List;
@@ -13,11 +14,11 @@ import java.util.UUID;
 @Entity(name = "rooms")
 @Data
 @IdClass(value = pk_roomId.class)
+@Accessors(chain = true)
 public class Room {
 
     @Id
-    private long hotel_id;
-
+    private String hotel_id;
     private String description;
 
     private String type;
@@ -33,7 +34,7 @@ public class Room {
 @EqualsAndHashCode
 @NoArgsConstructor
 class pk_roomId implements Serializable {
-    private long hotel_id;
-    private Long number;
+    private String hotel_id;
+    private long number;
 
 }
