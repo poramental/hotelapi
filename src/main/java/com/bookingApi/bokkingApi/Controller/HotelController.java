@@ -53,7 +53,9 @@ public class HotelController {
         try{
             System.out.println(hotelDtoList.toString());
             hotelService.saveAll(hotelDtoList);
-            return HttpStatus.OK;
+
+            return HttpStatus.CREATED;
+
 
         } catch (Exception e) {
             e.printStackTrace();

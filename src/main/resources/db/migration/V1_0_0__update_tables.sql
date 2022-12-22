@@ -10,33 +10,33 @@ CREATE TABLE "hotels"(
 );
 
 CREATE TABLE "rooms"(
-      id VARCHAR(40) NOT NULL PRIMARY KEY,
       type VARCHAR(20) NOT NULL,
-      price BIGINT NOT NULL,
+      price numeric NOT NULL,
       description VARCHAR(255),
-      number BIGINT NOT NULL,
+      number SMALLINT NOT NULL,
       free_tag boolean DEFAULT true,
-      hotel_id VARCHAR(40) NOT NULL
+      hotel_id VARCHAR(40) NOT NULL,
+      CONSTRAINT pk_roomId PRIMARY KEY(hotel_id,number)
 
 
 
   );
 
 CREATE TABLE "excursions"(
-    id VARCHAR(40) NOT NULL PRIMARY KEY,
     name VARCHAR(60) NOT NULL,
     description VARCHAR(255),
-    price BIGINT NOT NULL,
-    hotel_id VARCHAR(40) NOT NULL
+    price numeric NOT NULL,
+    hotel_id VARCHAR(40) NOT NULL,
+    CONSTRAINT pk_excursionId PRIMARY KEY(hotel_id,name)
 
 );
 
 CREATE TABLE "services"(
-    id VARCHAR(40) NOT NULL PRIMARY KEY,
     name VARCHAR(60) NOT NULL,
     description VARCHAR(255),
-    price BIGINT NOT NULL,
-    hotel_id VARCHAR(40) NOT NULL
+    price numeric NOT NULL,
+    hotel_id VARCHAR(40) NOT NULL,
+    CONSTRAINT pk_serviceId PRIMARY KEY(hotel_id,name)
 
 );
 

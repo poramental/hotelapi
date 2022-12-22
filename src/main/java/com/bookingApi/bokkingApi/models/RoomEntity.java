@@ -12,24 +12,33 @@ import java.io.Serializable;
 @Entity(name = "rooms")
 @Data
 @Accessors(chain = true)
+@IdClass(pk_roomId.class)
 public class RoomEntity {
 
-    @Id
-    private String id;
+
 
     private String description;
 
     private String type;
 
 
-    private long number;
+    @Id
+    private int number;
 
-    private long price;
+    private double price;
 
-    private String hotel_id;
+    @Id
+    @Column(name = "hotel_id")
+    private String hotelId;
 
     @Column(name = "free_tag")
     private Boolean freeTag;
 
 }
 
+@NoArgsConstructor
+@EqualsAndHashCode
+class pk_roomId implements Serializable{
+    private String hotelId;
+    private int number;
+}

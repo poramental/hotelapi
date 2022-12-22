@@ -40,8 +40,7 @@ public class HotelService {
                     hotelDto.getRooms().forEach(
                             room -> {
                                 room.setFreeTag(true);
-                                room.setId(UUID.randomUUID().toString())
-                                        .setHotel_id(hotelEntity.getId());
+                                room.setHotelId(hotelEntity.getId());
                                 roomRepository.save(room);
 
                             }
@@ -70,8 +69,8 @@ public class HotelService {
         hotelDto.getRooms().forEach(
                 room -> {
 
-                    room.setId(hotelEntity.getId());
 
+                    room.setHotelId(hotelEntity.getId());
                     roomRepository.save(room);
                 }
         );

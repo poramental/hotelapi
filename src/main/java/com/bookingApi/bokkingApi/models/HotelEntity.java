@@ -49,6 +49,11 @@ public class HotelEntity {
         return this;
     }
 
+    public HotelEntity addRoom(RoomEntity room){
+        this.rooms.add(room);
+        return this;
+    }
+
     public HotelEntity addServices(List<ServiceEntity> services){
         this.services.addAll(services);
         return this;

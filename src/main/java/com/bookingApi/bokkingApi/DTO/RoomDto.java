@@ -12,7 +12,7 @@ public class RoomDto {
 
     private String type;
 
-    private long number;
+    private int number;
 
-    private long price;
+    private double price;
 }
