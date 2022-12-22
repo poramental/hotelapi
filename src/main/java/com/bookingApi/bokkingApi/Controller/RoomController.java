@@ -36,9 +36,14 @@ public class RoomController {
         if(opt_hotel.isPresent()){
 
             List<RoomEntity> rooms = opt_hotel.get().getRooms();
-            for(RoomEntity room : rooms){
-                if(room.getNumber() == roomNumber) return room;
-                else continue;
+            System.out.println(rooms.toString());
+            int fIndex = 0;
+            int lIndex = rooms.size() - 1;
+            while(fIndex <= lIndex) {
+                int middleIndex = (fIndex + lIndex) / 2;
+                if(rooms.get(middleIndex).getNumber() == roomNumber) return rooms.get(middleIndex);
+                else if (rooms.get(middleIndex).getNumber() < roomNumber) fIndex = middleIndex + 1;
+                else if (rooms.get(middleIndex).getNumber() > roomNumber) lIndex = middleIndex - 1;
             }
         }return null;
     }
