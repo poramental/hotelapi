@@ -6,7 +6,7 @@ import com.bookingApi.bokkingApi.models.HotelEntity;
 import com.bookingApi.bokkingApi.models.RoomEntity;
 import com.bookingApi.bokkingApi.repository.HotelRepository;
 import com.bookingApi.bokkingApi.repository.RoomRepository;
-import lombok.AllArgsConstructor;
+import com.bookingApi.bokkingApi.service.RoomService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,41 +15,51 @@ import java.util.Optional;
 
 
 
-@AllArgsConstructor
+
 @RestController
-@RequestMapping("hotels/rooms")
+@RequestMapping(path = "hotels/{hotel_name}/rooms")
 public class RoomController {
 
     private final RoomRepository roomRepository;
     private final HotelRepository hotelRepository;
 
+    private final RoomService roomService;
 
-    @GetMapping
-    public List<RoomEntity> getRooms(@RequestParam(name = "hotel_name") String hotelName){
-        Optional<HotelEntity> hotel = hotelRepository.findByName(hotelName);
-        return hotel.get().getRooms();
+
+    RoomController(RoomService roomService,
+                   HotelRepository hotelRepository,
+                   RoomRepository roomRepository){
+        this.roomService = roomService;
+        this.hotelRepository = hotelRepository;
+        this.roomRepository = roomRepository;
     }
 
-    @GetMapping(params = {"hotel_name","room_number"})
-    public RoomEntity getRoom(@RequestParam(name = "hotel_name") String hotelName,@RequestParam(name = "room_number") int roomNumber ){
+    @GetMapping()
+    public List<RoomEntity> getRooms(@PathVariable("hotel_name") String hotelName){
+        Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
+        if(opt_hotel.isPresent()) {
+            return opt_hotel.get().getRooms();
+        }else{
+            return null; //TODO add not found exception for get rooms method;
+        }
+    }
+
+    @GetMapping( path = "/{room_number}")
+    public RoomEntity getRoom(@PathVariable("hotel_name") String hotelName,
+                              @PathVariable(name = "room_number") int roomNumber ){
         Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
         if(opt_hotel.isPresent()){
-
-            List<RoomEntity> rooms = opt_hotel.get().getRooms();
-            System.out.println(rooms.toString());
-            int fIndex = 0;
-            int lIndex = rooms.size() - 1;
-            while(fIndex <= lIndex) {
-                int middleIndex = (fIndex + lIndex) / 2;
-                if(rooms.get(middleIndex).getNumber() == roomNumber) return rooms.get(middleIndex);
-                else if (rooms.get(middleIndex).getNumber() < roomNumber) fIndex = middleIndex + 1;
-                else if (rooms.get(middleIndex).getNumber() > roomNumber) lIndex = middleIndex - 1;
+            Optional<RoomEntity> opt_room = roomRepository.findByhotelIdAndNumber(opt_hotel.get().getId(),roomNumber);
+            if(opt_room.isPresent()){
+                return opt_room.get();
             }
-        }return null;
+
+        }return null; //TODO add not found exception for get room method;
     }
 
-    @PostMapping
-    public HttpStatus addRoom(@RequestParam(name = "hotel_name") String hotelName, @RequestBody RoomDto roomDto){
+    @PostMapping()
+    public HttpStatus addRoom(@PathVariable("hotel_name") String hotelName,
+                              @RequestBody RoomDto roomDto){
         Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
         RoomEntity room = new RoomEntity()
                 .setDescription(roomDto.getDescription())
@@ -66,8 +76,9 @@ public class RoomController {
 
     }
 
-    @DeleteMapping(params = {"hotel_name","room_number"})
-    public HttpStatus deleteRoom(@RequestParam(name = "hotel_name") String hotelName, @RequestParam(name = "room_number") long room_number){
+    @DeleteMapping( path = "/{room_number}")
+    public HttpStatus deleteRoom(@PathVariable("hotel_name") String hotelName,
+                                 @PathVariable(name = "room_number") int room_number){
         Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
         if(opt_hotel.isPresent()){
             Optional<RoomEntity> opt_room = roomRepository.findByhotelIdAndNumber(opt_hotel.get().getId(), room_number);
@@ -79,7 +90,39 @@ public class RoomController {
         return HttpStatus.NOT_FOUND;
     }
 
-/* TODO create PATH mapping for this class*/
+
+    @PutMapping()
+    public HttpStatus updateRoom(@PathVariable( "hotel_name") String hotelName,
+                                 @RequestBody RoomDto roomDto){
+            return roomService.update(hotelName,roomDto);
+    }
+
+    @GetMapping(params = {"free_rooms"})
+    public List<RoomEntity> getAllFreeRooms(@PathVariable("hotel_name") String hotelName,
+                                            @RequestParam(name = "free_rooms") boolean freeTag){
+        if(freeTag == true) return roomService.getAllFreeRooms(hotelName);
+        else return roomService.getAllOccupiedRooms(hotelName);
+    }
+
+
+    @PatchMapping(path = "/{room_number}")
+    public HttpStatus setRoomFreeTag(@PathVariable("room_number") int roomNumber,
+                                      @PathVariable("hotel_name") String hotelName,
+                                      @RequestParam("free_tag") boolean freeTag){
+    return roomService.setRoomFreeTag(hotelName,roomNumber,freeTag);
+
+
+    }
+
+    @PatchMapping(path = "/{price}")
+    public HttpStatus setNewPrice(@PathVariable("room_number") int roomNumber,
+                                     @PathVariable("hotel_name") String hotelName,
+                                     @RequestParam("price") double price){
+        return roomService.setRoomPrice(hotelName,roomNumber,price);
+
+
+    }
+
 
 
 

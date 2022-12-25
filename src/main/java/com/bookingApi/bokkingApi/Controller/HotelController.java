@@ -6,12 +6,9 @@ import com.bookingApi.bokkingApi.models.HotelEntity;
 import com.bookingApi.bokkingApi.repository.HotelRepository;
 import com.bookingApi.bokkingApi.repository.RoomRepository;
 import com.bookingApi.bokkingApi.service.HotelService;
-import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 
@@ -22,14 +19,14 @@ public class HotelController {
 
 
     private final HotelRepository hotelRepository;
-    private final RoomRepository roomRepository;
+
 
     private final HotelService hotelService;
 
-    HotelController(HotelRepository hotelRepository, RoomRepository roomRepository, HotelService hotelService){
+    HotelController(HotelRepository hotelRepository, HotelService hotelService){
         this.hotelRepository = hotelRepository;
         this.hotelService = hotelService;
-        this.roomRepository = roomRepository;
+
     }
 
     @GetMapping
@@ -37,13 +34,13 @@ public class HotelController {
         return hotelRepository.findAll();
     }
 
-    @GetMapping(params = "hotel_name")
-    public HotelEntity getHotel(@RequestParam(name = "hotel_name") String hotelName) {
+    @GetMapping(path = "/{hotel_name}")
+    public HotelEntity getHotel(@PathVariable("hotel_name") String hotelName) {
         Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
         if(opt_hotel.isPresent()){
             return opt_hotel.get();
         }else{
-           return null;
+           return null; //TODO add not found exception for get Hotel method;
         }
     }
 
@@ -51,7 +48,6 @@ public class HotelController {
     @PostMapping
     public HttpStatus addHotels(@RequestBody List<HotelDto> hotelDtoList){
         try{
-            System.out.println(hotelDtoList.toString());
             hotelService.saveAll(hotelDtoList);
 
             return HttpStatus.CREATED;
@@ -62,29 +58,26 @@ public class HotelController {
             return HttpStatus.BAD_REQUEST;
         }
     }
-/* TODO create method to adding one hotel
-    @PostMapping(params = "type")
-    public HttpStatus addHotel(@RequestParam(name = "type") String type, @RequestBody HotelDto hotelDto){
 
-            try {
-                hotelService.save(hotelDto);
-                return HttpStatus.OK;
-            }catch (Exception e){
-                e.printStackTrace();
-                return HttpStatus.BAD_REQUEST;
-            }
 
-    }*/
-
-    @DeleteMapping(params = "hotel_name")
-    public HttpStatus deleteHotel(@RequestParam(name = "hotel_name") String hotelName){
+    @DeleteMapping(path = "/{hotel_name}")
+    public HttpStatus deleteHotel(@PathVariable("hotel_name") String hotelName){
         Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
         if(opt_hotel.isPresent()){
-            System.out.println(opt_hotel.get().toString() + "!!!!!!!!!!!!!");
             hotelService.delete(opt_hotel.get());
             return HttpStatus.OK;
         }else{
             return HttpStatus.NOT_FOUND;
+        }
+
+    }
+
+    @PutMapping
+    public HttpStatus updateHotel(@RequestBody HotelDto hotelDto){
+        try{
+            return hotelService.update(hotelDto);
+        }catch (Exception e){
+            return HttpStatus.CONFLICT;
         }
 
     }
@@ -102,5 +95,20 @@ public class HotelController {
 
 
     }
+
+    @PatchMapping("/{hotel_name}")
+    public HttpStatus renameHotel(@PathVariable("hotel_name") String hotelName,
+                                  @RequestParam(name = "new_hotel_name") String newHotelName ){
+        try {
+            return hotelService.renameHotel(hotelName, newHotelName);
+        }catch (Exception e){
+            return HttpStatus.CONFLICT;
+        }
+    }
+
+
+
+
+
 
 }
