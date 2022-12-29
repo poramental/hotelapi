@@ -14,27 +14,24 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/hotels")
+
 public class HotelController {
-
-
-    private final HotelRepository hotelRepository;
 
 
     private final HotelService hotelService;
 
-    HotelController(HotelRepository hotelRepository, HotelService hotelService){
-        this.hotelRepository = hotelRepository;
+    HotelController( HotelService hotelService){
         this.hotelService = hotelService;
 
     }
 
     @GetMapping
-    public Iterable<HotelEntity> getHotels(){
-        return hotelRepository.findAll();
+    public List<HotelDto> getHotels(){
+        return hotelService.getHotels();
     }
 
     @GetMapping(path = "/{hotel_name}")
-    public HotelEntity getHotel(@PathVariable("hotel_name") String hotelName) {
+    public HotelDto getHotel(@PathVariable("hotel_name") String hotelName) {
         return hotelService.getHotel(hotelName);
     }
 
@@ -56,13 +53,7 @@ public class HotelController {
 
     @DeleteMapping(path = "/{hotel_name}")
     public HttpStatus deleteHotel(@PathVariable("hotel_name") String hotelName){
-        Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
-        if(opt_hotel.isPresent()){
-            hotelService.delete(opt_hotel.get());
-            return HttpStatus.OK;
-        }else{
-            return HttpStatus.NOT_FOUND;
-        }
+        return hotelService.deleteHotelByName(hotelName);
 
     }
 

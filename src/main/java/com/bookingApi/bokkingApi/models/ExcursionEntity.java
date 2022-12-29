@@ -14,9 +14,11 @@ import java.util.UUID;
 public class ExcursionEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @Column(updatable = false)
+    private UUID id;
     private String description;
+
+
 
 
     @Column(name="hotel_id")
@@ -24,7 +26,7 @@ public class ExcursionEntity {
 
     private String name;
 
-    private long price;
+    private double price;
 }
 
 

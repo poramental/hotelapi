@@ -2,6 +2,7 @@ package com.bookingApi.bokkingApi.services;
 
 
 import com.bookingApi.bokkingApi.DTO.RoomDto;
+import com.bookingApi.bokkingApi.mappers.RoomListMapper;
 import com.bookingApi.bokkingApi.mappers.RoomMapper;
 import com.bookingApi.bokkingApi.models.HotelEntity;
 import com.bookingApi.bokkingApi.models.RoomEntity;
@@ -23,11 +24,13 @@ public class RoomService {
 
     private final RoomMapper roomMapper;
 
+    private RoomListMapper roomListMapper;
+
     public HttpStatus update(String hotelName, RoomDto roomDto){
         Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
         if(opt_hotel.isPresent()){
-            Optional<RoomEntity> opt_room = roomRepository.findByhotelIdAndNumber(opt_hotel.get().getId(),
-                                                                                    roomDto.getNumber());
+            Optional<RoomEntity> opt_room = roomRepository.
+                    findByhotelIdAndNumber(opt_hotel.get().getId(), roomDto.getNumber());
             if(opt_room.isPresent()){
                 RoomEntity roomDb = opt_room.get();
                 if(Objects.nonNull(roomDto.getDescription()) && !"".equals(roomDto.getDescription())){
@@ -46,21 +49,31 @@ public class RoomService {
 
         }return HttpStatus.NOT_FOUND;
     }
+    public List<RoomDto> getRooms(String hotelName){
+        Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
+        if(opt_hotel.isPresent()) {
+            return roomListMapper.toDtoList(opt_hotel.get().getRooms());
+        }else{
+            return null; //TODO add not found exception for get rooms method;
+        }
+    }
 
-    public List<RoomEntity> getAllFreeRooms(String hotelName){
+    public List<RoomDto> getAllFreeRooms(String hotelName){
         Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
         if(opt_hotel.isPresent()){
-            return roomRepository.findByhotelIdAndFreeTagTrue(opt_hotel.get().getId());
+            return roomListMapper.toDtoList(roomRepository.
+                    findByhotelIdAndFreeTagTrue(opt_hotel.get().getId()));
         }
 
         return new ArrayList<>();
 
     }
 
-    public List<RoomEntity> getAllOccupiedRooms(String hotelName){
+    public List<RoomDto> getAllOccupiedRooms(String hotelName){
         Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
         if(opt_hotel.isPresent()){
-            return roomRepository.findByhotelIdAndFreeTagFalse(opt_hotel.get().getId());
+            return roomListMapper.toDtoList(roomRepository.
+                    findByhotelIdAndFreeTagFalse(opt_hotel.get().getId()));
         }
 
         return new ArrayList<>();
@@ -70,7 +83,8 @@ public class RoomService {
     public HttpStatus setRoomFreeTag(String hotelName,int roomNumber, boolean freeTag){
         Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
         if(opt_hotel.isPresent()){
-            Optional<RoomEntity> opt_room = roomRepository.findByhotelIdAndNumber(opt_hotel.get().getId(),roomNumber);
+            Optional<RoomEntity> opt_room = roomRepository.
+                    findByhotelIdAndNumber(opt_hotel.get().getId(),roomNumber);
             if(opt_room.isPresent()){
                 roomRepository.save(opt_room.get().setFreeTag(freeTag));
                 return HttpStatus.OK;
@@ -82,7 +96,8 @@ public class RoomService {
     public HttpStatus setRoomPrice(String hotelName,int roomNumber, double price){
         Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
         if(opt_hotel.isPresent()){
-            Optional<RoomEntity> opt_room = roomRepository.findByhotelIdAndNumber(opt_hotel.get().getId(),roomNumber);
+            Optional<RoomEntity> opt_room = roomRepository.
+                    findByhotelIdAndNumber(opt_hotel.get().getId(),roomNumber);
             if(opt_room.isPresent()){
                 roomRepository.save(opt_room.get().setPrice(price));
                 return HttpStatus.OK;
@@ -97,6 +112,7 @@ public class RoomService {
         Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
         RoomEntity room = roomMapper.toEntity(roomDto);
         if(opt_hotel.isPresent()){
+            room.setHotelId(opt_hotel.get().getId());
             roomRepository.save(room);
             return HttpStatus.CREATED;
 
@@ -106,7 +122,8 @@ public class RoomService {
     public HttpStatus deleteRoom(String hotelName, int number){
         Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
         if(opt_hotel.isPresent()){
-            Optional<RoomEntity> opt_room = roomRepository.findByhotelIdAndNumber(opt_hotel.get().getId(), number);
+            Optional<RoomEntity> opt_room = roomRepository.
+                    findByhotelIdAndNumber(opt_hotel.get().getId(), number);
             if(opt_room.isPresent()){
                 roomRepository.delete(opt_room.get());
                 return HttpStatus.OK;
@@ -115,21 +132,14 @@ public class RoomService {
         return HttpStatus.NOT_FOUND;
     }
 
-    public List<RoomEntity> getRooms(String hotelName){
-        Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
-        if(opt_hotel.isPresent()) {
-            return opt_hotel.get().getRooms();
-        }else{
-            return null; //TODO add not found exception for get rooms method;
-        }
-    }
 
-    public RoomEntity getRoom(String hotelName, int number){
+    public RoomDto getRoom(String hotelName, int number){
         Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
         if(opt_hotel.isPresent()){
-            Optional<RoomEntity> opt_room = roomRepository.findByhotelIdAndNumber(opt_hotel.get().getId(), number);
+            Optional<RoomEntity> opt_room = roomRepository.
+                    findByhotelIdAndNumber(opt_hotel.get().getId(), number);
             if(opt_room.isPresent()){
-                return opt_room.get();
+                return roomMapper.toDto(opt_room.get());
             }
 
         }return null; //TODO add not found exception for get room method;

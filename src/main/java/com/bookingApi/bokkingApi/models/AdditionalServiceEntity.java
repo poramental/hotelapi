@@ -13,8 +13,7 @@ public class AdditionalServiceEntity {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
     @Column(name = "hotel_id")
     private UUID hotelId;

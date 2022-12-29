@@ -30,6 +30,11 @@ public class HotelService {
     private final ExcursionListMapper excursionListMapper;
 
 
+    public List<HotelDto> getHotels(){
+        return hotelListMapper.toDtoList(hotelRepository.findAll());
+    }
+
+
     public void saveAll(List<HotelDto> hotelDtoList) {
 
         List<HotelEntity> hotels = hotelListMapper.toEntityList(hotelDtoList);
@@ -149,10 +154,10 @@ public class HotelService {
     }
 
 
-    public HotelEntity getHotel(String hotelName){
+    public HotelDto getHotel(String hotelName){
         Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
         if(opt_hotel.isPresent()){
-            return opt_hotel.get();
+            return hotelMapper.toDto(opt_hotel.get());
         }else{
             return null; //TODO add not found exception for get Hotel method;
         }
@@ -166,6 +171,16 @@ public class HotelService {
 
             deleteAll(hotels);
             return HttpStatus.OK;
+        }
+    }
+
+    public HttpStatus deleteHotelByName(String hotelName){
+        Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
+        if(opt_hotel.isPresent()){
+            delete(opt_hotel.get());
+            return HttpStatus.OK;
+        }else{
+            return HttpStatus.NOT_FOUND;
         }
     }
 

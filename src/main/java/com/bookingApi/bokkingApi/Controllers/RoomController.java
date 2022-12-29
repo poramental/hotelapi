@@ -29,12 +29,12 @@ public class RoomController {
     }
 
     @GetMapping()
-    public List<RoomEntity> getRooms(@PathVariable("hotel_name") String hotelName){
+    public List<RoomDto> getRooms(@PathVariable("hotel_name") String hotelName){
         return roomService.getRooms(hotelName);
     }
 
     @GetMapping( path = "/{room_number}")
-    public RoomEntity getRoom(@PathVariable("hotel_name") String hotelName,
+    public RoomDto getRoom(@PathVariable("hotel_name") String hotelName,
                               @PathVariable(name = "room_number") int roomNumber ){
         return roomService.getRoom(hotelName,roomNumber);
     }
@@ -61,7 +61,7 @@ public class RoomController {
     }
 
     @GetMapping(params = {"free_rooms"})
-    public List<RoomEntity> getAllFreeRooms(@PathVariable("hotel_name") String hotelName,
+    public List<RoomDto> getAllFreeRooms(@PathVariable("hotel_name") String hotelName,
                                             @RequestParam(name = "free_rooms") boolean freeTag){
         if(freeTag == true) return roomService.getAllFreeRooms(hotelName);
         else return roomService.getAllOccupiedRooms(hotelName);

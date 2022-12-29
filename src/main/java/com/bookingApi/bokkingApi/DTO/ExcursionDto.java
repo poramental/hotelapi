@@ -10,6 +10,6 @@ public class ExcursionDto {
 
     private String name;
 
-    private long price;
+    private double price;
 
 }
