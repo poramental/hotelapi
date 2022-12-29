@@ -32,6 +32,7 @@ public class HotelController {
 
     @GetMapping(path = "/{hotel_name}")
     public HotelDto getHotel(@PathVariable("hotel_name") String hotelName) {
+        hotelName = hotelName.replace("_", " ");
         return hotelService.getHotel(hotelName);
     }
 
@@ -53,6 +54,7 @@ public class HotelController {
 
     @DeleteMapping(path = "/{hotel_name}")
     public HttpStatus deleteHotel(@PathVariable("hotel_name") String hotelName){
+        hotelName = hotelName.replace("_", " ");
         return hotelService.deleteHotelByName(hotelName);
 
     }
@@ -75,6 +77,7 @@ public class HotelController {
     @PatchMapping("/{hotel_name}")
     public HttpStatus renameHotel(@PathVariable("hotel_name") String hotelName,
                                   @RequestParam(name = "new_hotel_name") String newHotelName ){
+        hotelName = hotelName.replace("_", " ");
         try {
             return hotelService.renameHotel(hotelName, newHotelName);
         }catch (Exception e){

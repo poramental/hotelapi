@@ -30,19 +30,22 @@ public class RoomController {
 
     @GetMapping()
     public List<RoomDto> getRooms(@PathVariable("hotel_name") String hotelName){
+        hotelName = hotelName.replace("_", " ");
         return roomService.getRooms(hotelName);
     }
 
     @GetMapping( path = "/{room_number}")
     public RoomDto getRoom(@PathVariable("hotel_name") String hotelName,
                               @PathVariable(name = "room_number") int roomNumber ){
+        hotelName = hotelName.replace("_", " ");
         return roomService.getRoom(hotelName,roomNumber);
     }
 
     @PostMapping()
     public HttpStatus addRoom(@PathVariable("hotel_name") String hotelName,
                               @RequestBody RoomDto roomDto){
-         return roomService.addRoom(hotelName,roomDto);
+        hotelName = hotelName.replace("_", " ");
+        return roomService.addRoom(hotelName,roomDto);
 
 
     }
@@ -50,6 +53,7 @@ public class RoomController {
     @DeleteMapping( path = "/{room_number}")
     public HttpStatus deleteRoom(@PathVariable("hotel_name") String hotelName,
                                  @PathVariable(name = "room_number") int number){
+        hotelName = hotelName.replace("_", " ");
         return roomService.deleteRoom(hotelName, number);
     }
 
@@ -57,12 +61,14 @@ public class RoomController {
     @PutMapping()
     public HttpStatus updateRoom(@PathVariable( "hotel_name") String hotelName,
                                  @RequestBody RoomDto roomDto){
-            return roomService.update(hotelName,roomDto);
+        hotelName = hotelName.replace("_", " ");
+        return roomService.update(hotelName,roomDto);
     }
 
     @GetMapping(params = {"free_rooms"})
     public List<RoomDto> getAllFreeRooms(@PathVariable("hotel_name") String hotelName,
                                             @RequestParam(name = "free_rooms") boolean freeTag){
+        hotelName = hotelName.replace("_", " ");
         if(freeTag == true) return roomService.getAllFreeRooms(hotelName);
         else return roomService.getAllOccupiedRooms(hotelName);
     }
@@ -72,7 +78,8 @@ public class RoomController {
     public HttpStatus setRoomFreeTag(@PathVariable("room_number") int roomNumber,
                                       @PathVariable("hotel_name") String hotelName,
                                       @RequestParam("is_free") boolean freeTag){
-    return roomService.setRoomFreeTag(hotelName,roomNumber,freeTag);
+        hotelName = hotelName.replace("_", " ");
+        return roomService.setRoomFreeTag(hotelName,roomNumber,freeTag);
 
 
     }
@@ -81,6 +88,7 @@ public class RoomController {
     public HttpStatus setNewPrice(@PathVariable("room_number") int roomNumber,
                                      @PathVariable("hotel_name") String hotelName,
                                      @RequestParam("price") double price){
+        hotelName = hotelName.replace("_", " ");
         return roomService.setRoomPrice(hotelName,roomNumber,price);
 
 
