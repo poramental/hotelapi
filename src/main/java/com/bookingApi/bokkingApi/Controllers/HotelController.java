@@ -1,11 +1,10 @@
-package com.bookingApi.bokkingApi.Controller;
+package com.bookingApi.bokkingApi.Controllers;
 
 
 import com.bookingApi.bokkingApi.DTO.HotelDto;
 import com.bookingApi.bokkingApi.models.HotelEntity;
-import com.bookingApi.bokkingApi.repository.HotelRepository;
-import com.bookingApi.bokkingApi.repository.RoomRepository;
-import com.bookingApi.bokkingApi.service.HotelService;
+import com.bookingApi.bokkingApi.repositories.HotelRepository;
+import com.bookingApi.bokkingApi.services.HotelService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;

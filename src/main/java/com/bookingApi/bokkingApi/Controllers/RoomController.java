@@ -1,12 +1,12 @@
-package com.bookingApi.bokkingApi.Controller;
+package com.bookingApi.bokkingApi.Controllers;
 
 
 import com.bookingApi.bokkingApi.DTO.RoomDto;
 import com.bookingApi.bokkingApi.models.HotelEntity;
 import com.bookingApi.bokkingApi.models.RoomEntity;
-import com.bookingApi.bokkingApi.repository.HotelRepository;
-import com.bookingApi.bokkingApi.repository.RoomRepository;
-import com.bookingApi.bokkingApi.service.RoomService;
+import com.bookingApi.bokkingApi.repositories.HotelRepository;
+import com.bookingApi.bokkingApi.repositories.RoomRepository;
+import com.bookingApi.bokkingApi.services.RoomService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -105,10 +105,10 @@ public class RoomController {
     }
 
 
-    @PatchMapping(path = "/{room_number}")
+    @PatchMapping(path = "/{room_number}" , params = "is_free")
     public HttpStatus setRoomFreeTag(@PathVariable("room_number") int roomNumber,
                                       @PathVariable("hotel_name") String hotelName,
-                                      @RequestParam("free_tag") boolean freeTag){
+                                      @RequestParam("is_free") boolean freeTag){
     return roomService.setRoomFreeTag(hotelName,roomNumber,freeTag);
 
 

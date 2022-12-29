@@ -1,11 +1,11 @@
-package com.bookingApi.bokkingApi.service;
+package com.bookingApi.bokkingApi.services;
 
 
 import com.bookingApi.bokkingApi.DTO.RoomDto;
 import com.bookingApi.bokkingApi.models.HotelEntity;
 import com.bookingApi.bokkingApi.models.RoomEntity;
-import com.bookingApi.bokkingApi.repository.HotelRepository;
-import com.bookingApi.bokkingApi.repository.RoomRepository;
+import com.bookingApi.bokkingApi.repositories.HotelRepository;
+import com.bookingApi.bokkingApi.repositories.RoomRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

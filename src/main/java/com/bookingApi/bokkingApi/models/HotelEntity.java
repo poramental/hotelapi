@@ -9,6 +9,7 @@ import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 @Entity(name = "hotels")
@@ -16,7 +17,7 @@ import java.util.List;
 @Accessors(chain = true)
 public class HotelEntity {
     @Id
-    private String id;
+    private UUID id;
 
     private String type;
 
@@ -36,7 +37,7 @@ public class HotelEntity {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "hotel_id",updatable=false)
-    private List<ServiceEntity> services = new ArrayList<>();
+    private List<AdditionalServiceEntity> services = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "hotel_id", updatable=false)
@@ -54,7 +55,7 @@ public class HotelEntity {
         return this;
     }
 
-    public HotelEntity addServices(List<ServiceEntity> services){
+    public HotelEntity addServices(List<AdditionalServiceEntity> services){
         this.services.addAll(services);
         return this;
     }
