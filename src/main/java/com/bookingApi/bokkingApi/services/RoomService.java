@@ -2,6 +2,7 @@ package com.bookingApi.bokkingApi.services;
 
 
 import com.bookingApi.bokkingApi.DTO.RoomDto;
+import com.bookingApi.bokkingApi.mappers.RoomMapper;
 import com.bookingApi.bokkingApi.models.HotelEntity;
 import com.bookingApi.bokkingApi.models.RoomEntity;
 import com.bookingApi.bokkingApi.repositories.HotelRepository;
@@ -19,6 +20,8 @@ import java.util.List;
 public class RoomService {
     private final RoomRepository roomRepository;
     private final HotelRepository hotelRepository;
+
+    private final RoomMapper roomMapper;
 
     public HttpStatus update(String hotelName, RoomDto roomDto){
         Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
@@ -87,6 +90,49 @@ public class RoomService {
 
         }
         return HttpStatus.NOT_FOUND;
+    }
+
+
+    public HttpStatus addRoom(String hotelName, RoomDto roomDto){
+        Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
+        RoomEntity room = roomMapper.toEntity(roomDto);
+        if(opt_hotel.isPresent()){
+            roomRepository.save(room);
+            return HttpStatus.CREATED;
+
+        }else return HttpStatus.NOT_FOUND;
+    }
+
+    public HttpStatus deleteRoom(String hotelName, int number){
+        Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
+        if(opt_hotel.isPresent()){
+            Optional<RoomEntity> opt_room = roomRepository.findByhotelIdAndNumber(opt_hotel.get().getId(), number);
+            if(opt_room.isPresent()){
+                roomRepository.delete(opt_room.get());
+                return HttpStatus.OK;
+            }
+        }
+        return HttpStatus.NOT_FOUND;
+    }
+
+    public List<RoomEntity> getRooms(String hotelName){
+        Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
+        if(opt_hotel.isPresent()) {
+            return opt_hotel.get().getRooms();
+        }else{
+            return null; //TODO add not found exception for get rooms method;
+        }
+    }
+
+    public RoomEntity getRoom(String hotelName, int number){
+        Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
+        if(opt_hotel.isPresent()){
+            Optional<RoomEntity> opt_room = roomRepository.findByhotelIdAndNumber(opt_hotel.get().getId(), number);
+            if(opt_room.isPresent()){
+                return opt_room.get();
+            }
+
+        }return null; //TODO add not found exception for get room method;
     }
 
 

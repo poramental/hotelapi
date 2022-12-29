@@ -35,12 +35,7 @@ public class HotelController {
 
     @GetMapping(path = "/{hotel_name}")
     public HotelEntity getHotel(@PathVariable("hotel_name") String hotelName) {
-        Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
-        if(opt_hotel.isPresent()){
-            return opt_hotel.get();
-        }else{
-           return null; //TODO add not found exception for get Hotel method;
-        }
+        return hotelService.getHotel(hotelName);
     }
 
 
@@ -83,16 +78,7 @@ public class HotelController {
 
     @DeleteMapping(params = "address")
     public HttpStatus deleteHotelByLocation(@RequestParam("address") String location){
-        List<HotelEntity> hotels = hotelRepository.findByAddress(location);
-        if(hotels.isEmpty()){
-            return HttpStatus.NOT_FOUND;
-        }else{
-
-            hotelService.deleteAll(hotels);
-            return HttpStatus.OK;
-        }
-
-
+        return hotelService.deleteHotelByLocation(location);
     }
 
     @PatchMapping("/{hotel_name}")

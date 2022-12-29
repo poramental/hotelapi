@@ -20,74 +20,37 @@ import java.util.Optional;
 @RequestMapping(path = "hotels/{hotel_name}/rooms")
 public class RoomController {
 
-    private final RoomRepository roomRepository;
-    private final HotelRepository hotelRepository;
-
     private final RoomService roomService;
 
 
-    RoomController(RoomService roomService,
-                   HotelRepository hotelRepository,
-                   RoomRepository roomRepository){
+    RoomController(RoomService roomService){
         this.roomService = roomService;
-        this.hotelRepository = hotelRepository;
-        this.roomRepository = roomRepository;
+
     }
 
     @GetMapping()
     public List<RoomEntity> getRooms(@PathVariable("hotel_name") String hotelName){
-        Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
-        if(opt_hotel.isPresent()) {
-            return opt_hotel.get().getRooms();
-        }else{
-            return null; //TODO add not found exception for get rooms method;
-        }
+        return roomService.getRooms(hotelName);
     }
 
     @GetMapping( path = "/{room_number}")
     public RoomEntity getRoom(@PathVariable("hotel_name") String hotelName,
                               @PathVariable(name = "room_number") int roomNumber ){
-        Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
-        if(opt_hotel.isPresent()){
-            Optional<RoomEntity> opt_room = roomRepository.findByhotelIdAndNumber(opt_hotel.get().getId(),roomNumber);
-            if(opt_room.isPresent()){
-                return opt_room.get();
-            }
-
-        }return null; //TODO add not found exception for get room method;
+        return roomService.getRoom(hotelName,roomNumber);
     }
 
     @PostMapping()
     public HttpStatus addRoom(@PathVariable("hotel_name") String hotelName,
                               @RequestBody RoomDto roomDto){
-        Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
-        RoomEntity room = new RoomEntity()
-                .setDescription(roomDto.getDescription())
-                .setFreeTag(true)
-                .setNumber(roomDto.getNumber())
-                .setPrice(roomDto.getPrice())
-                .setType(roomDto.getType())
-                .setHotelId(opt_hotel.get().getId());
-        if(opt_hotel.isPresent()){
-            roomRepository.save(room);
-            return HttpStatus.CREATED;
+         return roomService.addRoom(hotelName,roomDto);
 
-        }else return HttpStatus.NOT_FOUND;
 
     }
 
     @DeleteMapping( path = "/{room_number}")
     public HttpStatus deleteRoom(@PathVariable("hotel_name") String hotelName,
-                                 @PathVariable(name = "room_number") int room_number){
-        Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
-        if(opt_hotel.isPresent()){
-            Optional<RoomEntity> opt_room = roomRepository.findByhotelIdAndNumber(opt_hotel.get().getId(), room_number);
-            if(opt_room.isPresent()){
-                roomRepository.delete(opt_room.get());
-                return HttpStatus.OK;
-            }
-        }
-        return HttpStatus.NOT_FOUND;
+                                 @PathVariable(name = "room_number") int number){
+        return roomService.deleteRoom(hotelName, number);
     }
 
 

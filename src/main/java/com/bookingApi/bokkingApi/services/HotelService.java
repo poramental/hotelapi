@@ -149,5 +149,25 @@ public class HotelService {
     }
 
 
+    public HotelEntity getHotel(String hotelName){
+        Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
+        if(opt_hotel.isPresent()){
+            return opt_hotel.get();
+        }else{
+            return null; //TODO add not found exception for get Hotel method;
+        }
+    }
+
+    public HttpStatus deleteHotelByLocation(String location){
+        List<HotelEntity> hotels = hotelRepository.findByAddress(location);
+        if(hotels.isEmpty()){
+            return HttpStatus.NOT_FOUND;
+        }else{
+
+            deleteAll(hotels);
+            return HttpStatus.OK;
+        }
+    }
+
 
 }
