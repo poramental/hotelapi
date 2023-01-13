@@ -13,7 +13,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/hotels/{hotel_name}/excursions")
 public class ExcursionController {
-
     ExcursionService excursionService;
 
     @GetMapping

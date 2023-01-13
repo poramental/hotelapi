@@ -7,7 +7,6 @@ import com.bookingApi.bokkingApi.Exceptions.ResponseNotFoundException;
 import com.bookingApi.bokkingApi.mappers.*;
 import com.bookingApi.bokkingApi.models.HotelEntity;
 import com.bookingApi.bokkingApi.repositories.HotelRepository;
-import com.bookingApi.bokkingApi.repositories.RoomRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +33,7 @@ public class HotelService {
 
 
     public ResponseEntity<List<HotelDto>> getHotels(){
-        return  new ResponseEntity<List<HotelDto>>(hotelListMapper.toDtoList(hotelRepository.findAll()),HttpStatus.OK);
+        return new ResponseEntity<List<HotelDto>>(hotelListMapper.toDtoList(hotelRepository.findAll()),HttpStatus.OK);
     }
 
 
@@ -42,7 +41,10 @@ public class HotelService {
 
         List<HotelEntity> hotels = hotelListMapper.toEntityList(hotelDtoList);
         hotels.forEach(
+
                 hotel -> {
+                    if(hotelRepository.findByName(hotel.getName()).isPresent())
+                        throw new ObjectIsPresentException("hotel with name '"+hotel.getName()+"' is already exist");
                     hotel.setId(UUID.randomUUID());
                     if(hotel.getRooms() != null)
                     hotel.getRooms().forEach(

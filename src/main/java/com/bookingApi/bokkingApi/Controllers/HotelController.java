@@ -14,8 +14,6 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/hotels")
 public class HotelController {
-
-
     private final HotelService hotelService;
 
     HotelController( HotelService hotelService){
@@ -38,6 +36,7 @@ public class HotelController {
     @PostMapping
     public HttpStatus addHotels(@RequestBody List<HotelDto> hotelDtoList){
         try{
+
             hotelService.saveAll(hotelDtoList);
             return HttpStatus.CREATED;
 
