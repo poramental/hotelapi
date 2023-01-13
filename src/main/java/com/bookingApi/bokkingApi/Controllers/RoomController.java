@@ -2,16 +2,13 @@ package com.bookingApi.bokkingApi.Controllers;
 
 
 import com.bookingApi.bokkingApi.DTO.RoomDto;
-import com.bookingApi.bokkingApi.models.HotelEntity;
-import com.bookingApi.bokkingApi.models.RoomEntity;
-import com.bookingApi.bokkingApi.repositories.HotelRepository;
-import com.bookingApi.bokkingApi.repositories.RoomRepository;
 import com.bookingApi.bokkingApi.services.RoomService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+
 
 
 
@@ -29,14 +26,14 @@ public class RoomController {
     }
 
     @GetMapping()
-    public List<RoomDto> getRooms(@PathVariable("hotel_name") String hotelName){
+    public ResponseEntity<List<RoomDto>> getRooms(@PathVariable("hotel_name") String hotelName){
         hotelName = hotelName.replace("_", " ");
         return roomService.getRooms(hotelName);
     }
 
     @GetMapping( path = "/{room_number}")
-    public RoomDto getRoom(@PathVariable("hotel_name") String hotelName,
-                              @PathVariable(name = "room_number") int roomNumber ){
+    public ResponseEntity<RoomDto> getRoom(@PathVariable("hotel_name") String hotelName,
+                                           @PathVariable(name = "room_number") int roomNumber ){
         hotelName = hotelName.replace("_", " ");
         return roomService.getRoom(hotelName,roomNumber);
     }
@@ -66,8 +63,8 @@ public class RoomController {
     }
 
     @GetMapping(params = {"free_rooms"})
-    public List<RoomDto> getAllFreeRooms(@PathVariable("hotel_name") String hotelName,
-                                            @RequestParam(name = "free_rooms") boolean freeTag){
+    public ResponseEntity<List<RoomDto>> getAllFreeRooms(@PathVariable("hotel_name") String hotelName,
+                                          @RequestParam(name = "free_rooms") boolean freeTag){
         hotelName = hotelName.replace("_", " ");
         if(freeTag == true) return roomService.getAllFreeRooms(hotelName);
         else return roomService.getAllOccupiedRooms(hotelName);
@@ -93,8 +90,6 @@ public class RoomController {
 
 
     }
-
-
 
 
 }

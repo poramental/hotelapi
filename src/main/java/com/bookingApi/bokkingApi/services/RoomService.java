@@ -2,6 +2,7 @@ package com.bookingApi.bokkingApi.services;
 
 
 import com.bookingApi.bokkingApi.DTO.RoomDto;
+import com.bookingApi.bokkingApi.Exceptions.ResponseNotFoundException;
 import com.bookingApi.bokkingApi.mappers.RoomListMapper;
 import com.bookingApi.bokkingApi.mappers.RoomMapper;
 import com.bookingApi.bokkingApi.models.HotelEntity;
@@ -10,6 +11,7 @@ import com.bookingApi.bokkingApi.repositories.HotelRepository;
 import com.bookingApi.bokkingApi.repositories.RoomRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,7 +28,7 @@ public class RoomService {
 
     private RoomListMapper roomListMapper;
 
-    public HttpStatus update(String hotelName, RoomDto roomDto){
+    public HttpStatus update(String hotelName, RoomDto roomDto) {
         Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
         if(opt_hotel.isPresent()){
             Optional<RoomEntity> opt_room = roomRepository.
@@ -45,39 +47,35 @@ public class RoomService {
                 roomDb.setFreeTag(roomDto.getFreeTag());
                 roomRepository.save(roomDb);
                 return HttpStatus.OK;
-            }
+            }else throw new ResponseNotFoundException("hotel '" + hotelName + "' not found.");
 
-        }return HttpStatus.NOT_FOUND;
+        }else throw new ResponseNotFoundException("hotel '" + hotelName + "' not found.");
     }
-    public List<RoomDto> getRooms(String hotelName){
+    public ResponseEntity<List<RoomDto>> getRooms(String hotelName){
         Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
         if(opt_hotel.isPresent()) {
-            return roomListMapper.toDtoList(opt_hotel.get().getRooms());
-        }else{
-            return null; //TODO add not found exception for get rooms method;
-        }
-    }
 
-    public List<RoomDto> getAllFreeRooms(String hotelName){
-        Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
-        if(opt_hotel.isPresent()){
-            return roomListMapper.toDtoList(roomRepository.
-                    findByhotelIdAndFreeTagTrue(opt_hotel.get().getId()));
-        }
+            return new ResponseEntity<List<RoomDto>>(roomListMapper.toDtoList(opt_hotel.get().getRooms()),HttpStatus.OK);
 
-        return new ArrayList<>();
+        }else throw new ResponseNotFoundException("hotel '" + hotelName + "' not found.");
 
     }
 
-    public List<RoomDto> getAllOccupiedRooms(String hotelName){
+    public ResponseEntity<List<RoomDto>> getAllFreeRooms(String hotelName){
         Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
         if(opt_hotel.isPresent()){
-            return roomListMapper.toDtoList(roomRepository.
-                    findByhotelIdAndFreeTagFalse(opt_hotel.get().getId()));
-        }
+            return new ResponseEntity<List<RoomDto>>(roomListMapper.toDtoList(roomRepository.
+                    findByhotelIdAndFreeTagTrue(opt_hotel.get().getId())),HttpStatus.OK);
+        }else throw new ResponseNotFoundException("hotel '" + hotelName + "' not found.");
 
-        return new ArrayList<>();
+    }
 
+    public ResponseEntity<List<RoomDto>> getAllOccupiedRooms(String hotelName){
+        Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
+        if(opt_hotel.isPresent()){
+            return new ResponseEntity<List<RoomDto>>(roomListMapper.toDtoList(roomRepository.
+                    findByhotelIdAndFreeTagFalse(opt_hotel.get().getId())),HttpStatus.OK);
+        }else throw new ResponseNotFoundException("hotel '" + hotelName + " not found.");
     }
 
     public HttpStatus setRoomFreeTag(String hotelName,int roomNumber, boolean freeTag){
@@ -88,10 +86,9 @@ public class RoomService {
             if(opt_room.isPresent()){
                 roomRepository.save(opt_room.get().setFreeTag(freeTag));
                 return HttpStatus.OK;
-            }
+            } else throw new ResponseNotFoundException("room number '" + roomNumber + "' not found.");
 
-        }
-        return HttpStatus.NOT_FOUND;
+        }else throw new ResponseNotFoundException("room number '" + roomNumber + "' not found.");
     }
     public HttpStatus setRoomPrice(String hotelName,int roomNumber, double price){
         Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
@@ -101,10 +98,10 @@ public class RoomService {
             if(opt_room.isPresent()){
                 roomRepository.save(opt_room.get().setPrice(price));
                 return HttpStatus.OK;
-            }
 
-        }
-        return HttpStatus.NOT_FOUND;
+            }else throw new ResponseNotFoundException("room number '" + roomNumber + "' not found.");
+
+        }else throw new ResponseNotFoundException("hotel '" + hotelName + "' not found.");
     }
 
 
@@ -116,33 +113,36 @@ public class RoomService {
             roomRepository.save(room);
             return HttpStatus.CREATED;
 
-        }else return HttpStatus.NOT_FOUND;
+        }else throw new ResponseNotFoundException("hotel '" + hotelName + "' not found");
     }
 
     public HttpStatus deleteRoom(String hotelName, int number){
         Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
         if(opt_hotel.isPresent()){
-            Optional<RoomEntity> opt_room = roomRepository.
-                    findByhotelIdAndNumber(opt_hotel.get().getId(), number);
+            Optional<RoomEntity> opt_room = roomRepository.findByhotelIdAndNumber(opt_hotel.get().getId(), number);
             if(opt_room.isPresent()){
                 roomRepository.delete(opt_room.get());
                 return HttpStatus.OK;
+            }else{
+                throw new ResponseNotFoundException("room '" + number + "' not found.");
             }
+        }else{
+            throw new ResponseNotFoundException("hotel '" + hotelName + "' not found.");
         }
-        return HttpStatus.NOT_FOUND;
+
     }
 
 
-    public RoomDto getRoom(String hotelName, int number){
+    public ResponseEntity<RoomDto> getRoom(String hotelName, int number){
         Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
         if(opt_hotel.isPresent()){
             Optional<RoomEntity> opt_room = roomRepository.
                     findByhotelIdAndNumber(opt_hotel.get().getId(), number);
             if(opt_room.isPresent()){
-                return roomMapper.toDto(opt_room.get());
+                return new ResponseEntity<RoomDto>(roomMapper.toDto(opt_room.get()),HttpStatus.OK);
             }
 
-        }return null; //TODO add not found exception for get room method;
+        }throw new ResponseNotFoundException("hotel '" + hotelName + "' not found");
     }
 
 

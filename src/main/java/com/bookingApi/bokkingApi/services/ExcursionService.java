@@ -2,6 +2,7 @@ package com.bookingApi.bokkingApi.services;
 
 
 import com.bookingApi.bokkingApi.DTO.ExcursionDto;
+import com.bookingApi.bokkingApi.Exceptions.ResponseNotFoundException;
 import com.bookingApi.bokkingApi.mappers.ExcursionListMapper;
 import com.bookingApi.bokkingApi.mappers.ExcursionMapper;
 import com.bookingApi.bokkingApi.models.ExcursionEntity;
@@ -10,6 +11,7 @@ import com.bookingApi.bokkingApi.repositories.ExcursionRepository;
 import com.bookingApi.bokkingApi.repositories.HotelRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,11 +31,11 @@ public class ExcursionService {
     private final ExcursionListMapper excursionListMapper;
     private final ExcursionRepository excursionRepository;
 
-    public List<ExcursionDto> getExcursions(String hotelName){
+    public ResponseEntity<List<ExcursionDto>> getExcursions(String hotelName){
         Optional<HotelEntity> opt_hotel = hotelRepository.findByName(hotelName);
         if(opt_hotel.isPresent()){
-            return excursionListMapper.toDtoList(opt_hotel.get().getExcursions());
-        }else return null;
+            return new ResponseEntity<List<ExcursionDto>>(excursionListMapper.toDtoList(opt_hotel.get().getExcursions()), HttpStatus.OK);
+        }else throw new ResponseNotFoundException("hotel with name : " + hotelName + "Not Found.");
     }
 
 
