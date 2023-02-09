@@ -17,6 +17,7 @@ import java.util.UUID;
 @Accessors(chain = true)
 public class HotelEntity {
     @Id
+    @Column(name = "hotel_id")
     private UUID id;
 
     private String type;
@@ -32,15 +33,14 @@ public class HotelEntity {
 
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "hotel_id", updatable=false)
+    @JoinColumn(name = "hotel_id", updatable = false)
     private List<RoomEntity> rooms = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "hotel_id",updatable=false)
+    @ManyToMany(mappedBy = "hotels", fetch = FetchType.EAGER)
     private List<AdditionalServiceEntity> services = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "hotel_id", updatable=false)
+    @JoinColumn(name = "hotel_id", updatable = false)
     private List<ExcursionEntity> excursions = new ArrayList<>();
 
 
@@ -59,9 +59,18 @@ public class HotelEntity {
         this.services.addAll(services);
         return this;
     }
+    public HotelEntity addService(AdditionalServiceEntity service){
+        this.services.add(service);
+        return this;
+    }
 
     public HotelEntity addExcursions(List<ExcursionEntity> excursions){
         this.excursions.addAll(excursions);
+        return this;
+    }
+
+    public HotelEntity removeService(AdditionalServiceEntity service){
+        this.services.remove(service);
         return this;
     }
 }

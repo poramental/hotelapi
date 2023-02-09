@@ -4,8 +4,9 @@ import com.bookingApi.bokkingApi.models.AdditionalServiceEntity;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
 import java.util.UUID;
 
-public interface AdditionalService extends JpaRepository<AdditionalServiceEntity, UUID> {
-
+public interface AdditionalServiceRepo extends JpaRepository<AdditionalServiceEntity, UUID> {
+    Optional<AdditionalServiceEntity> findByName(String ServiceName);
 }

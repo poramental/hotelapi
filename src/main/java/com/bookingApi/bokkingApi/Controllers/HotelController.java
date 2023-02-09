@@ -35,15 +35,8 @@ public class HotelController {
 
     @PostMapping
     public HttpStatus addHotels(@RequestBody List<HotelDto> hotelDtoList){
-        try{
+            return hotelService.saveAll(hotelDtoList);
 
-            hotelService.saveAll(hotelDtoList);
-            return HttpStatus.CREATED;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return HttpStatus.BAD_REQUEST;
-        }
     }
 
 
@@ -68,7 +61,7 @@ public class HotelController {
     public HttpStatus renameHotel(@PathVariable("hotel_name") String hotelName,
                                   @RequestParam(name = "new_hotel_name") String newHotelName ){
         hotelName = hotelName.replace("_", " ");
-            return hotelService.renameHotel(hotelName, newHotelName);
+        return hotelService.renameHotel(hotelName, newHotelName);
 
     }
 

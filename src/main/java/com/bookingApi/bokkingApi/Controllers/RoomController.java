@@ -81,7 +81,7 @@ public class RoomController {
 
     }
 
-    @PatchMapping(path = "/{price}")
+    @PatchMapping(path = "/{room_number}", params = "price")
     public HttpStatus setNewPrice(@PathVariable("room_number") int roomNumber,
                                      @PathVariable("hotel_name") String hotelName,
                                      @RequestParam("price") double price){

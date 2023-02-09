@@ -37,7 +37,7 @@ public class HotelService {
     }
 
 
-    public void saveAll(List<HotelDto> hotelDtoList) {
+    public HttpStatus saveAll(List<HotelDto> hotelDtoList) {
 
         List<HotelEntity> hotels = hotelListMapper.toEntityList(hotelDtoList);
         hotels.forEach(
@@ -57,7 +57,7 @@ public class HotelService {
                     hotel.getServices().forEach(
                             service ->{
                                 if(service != null )
-                                    service.setHotelId(hotel.getId());
+                                    service.addHotel(hotel);
                             }
                     );
                     if(hotel.getExcursions() != null)
@@ -70,8 +70,11 @@ public class HotelService {
                 }
         );
         hotelRepository.saveAll(hotels);
+        return HttpStatus.CREATED;
 
     }
+
+
     public void save(HotelDto hotelDto){
         HotelEntity hotel = hotelMapper.toEntity(hotelDto);
         hotel.setId(UUID.randomUUID());
@@ -86,7 +89,7 @@ public class HotelService {
         hotel.getServices().forEach(
                 service ->{
                     if(service != null )
-                        service.setHotelId(hotel.getId());
+                        service.addHotel(hotel);
                 }
         );
         if(hotel.getExcursions() != null)
@@ -98,9 +101,6 @@ public class HotelService {
         );
         hotelRepository.save(hotel);
     }
-
-
-
 
 
     public void deleteAll(List<HotelEntity> hotels){
@@ -143,9 +143,6 @@ public class HotelService {
             hotelRepository.save(hotelDb);
             return HttpStatus.OK;
         } else throw new ResponseNotFoundException("hotel '" + hotelDto.getName() + "' not found");
-
-
-
     }
 
     public HttpStatus renameHotel(String hotelName, String newHotelName){
@@ -182,6 +179,8 @@ public class HotelService {
             return HttpStatus.OK;
         }else throw new ResponseNotFoundException("hotel '" + hotelName + "' not found.");
     }
+
+
 
 
 }

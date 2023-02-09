@@ -13,11 +13,12 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.List;
+
+
+
 @Service
 @AllArgsConstructor
 public class RoomService {
@@ -138,9 +139,11 @@ public class RoomService {
         if(opt_hotel.isPresent()){
             Optional<RoomEntity> opt_room = roomRepository.
                     findByhotelIdAndNumber(opt_hotel.get().getId(), number);
+
             if(opt_room.isPresent()){
                 return new ResponseEntity<RoomDto>(roomMapper.toDto(opt_room.get()),HttpStatus.OK);
-            }
+
+            }else throw new ResponseNotFoundException("room '" + number + "' not found.");
 
         }throw new ResponseNotFoundException("hotel '" + hotelName + "' not found");
     }

@@ -3,7 +3,9 @@ package com.bookingApi.bokkingApi.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.http.HttpStatus;
 
+import java.util.List;
 import java.util.UUID;
 
 
@@ -13,10 +15,11 @@ public class AdditionalServiceEntity {
 
 
     @Id
+    @Column(name="service_id")
     private UUID id;
 
-    @Column(name = "hotel_id")
-    private UUID hotelId;
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<HotelEntity> hotels;
 
     private String description;
 
@@ -25,6 +28,16 @@ public class AdditionalServiceEntity {
 
     private double price;
 
+
+    public AdditionalServiceEntity addHotel(HotelEntity hotel){
+        hotels.add(hotel);
+        return this;
+    }
+
+    public AdditionalServiceEntity removeHotel(HotelEntity hotel){
+        hotels.remove(hotel);
+        return this;
+    }
 
 }
 

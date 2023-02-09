@@ -44,11 +44,48 @@ public class ExcursionService {
         if(opt_hotel.isPresent()){
             ExcursionEntity excursion = excursionMapper.toEntity(excursionDto);
             excursion.setId(UUID.randomUUID());
+            excursion.setName(excursionDto.getName().replace(" ","_"));
             excursion.setHotelId(opt_hotel.get().getId());
             excursionRepository.save(excursion);
             return HttpStatus.CREATED;
-
-        }else return HttpStatus.CONFLICT;
+        }else throw new ResponseNotFoundException("hotel with name '" + hotelName +"' not found.");
     }
 
+    public ResponseEntity<ExcursionDto> getExcursionByName(String excursionName){
+        Optional<ExcursionEntity> opt_excursion = excursionRepository.findByName(excursionName);
+        if(opt_excursion.isPresent())
+            return new ResponseEntity<>(excursionMapper.toDto(opt_excursion.get()),HttpStatus.OK);
+        else
+            throw new ResponseNotFoundException("excursion with name " + excursionName + "not found.");
+    }
+
+
+    public HttpStatus updateExcursion(String excursionName, ExcursionDto excursionDto){
+        Optional<ExcursionEntity> opt_excursion = excursionRepository.findByName(excursionName);
+        if(opt_excursion.isPresent()){
+            ExcursionEntity excursion = opt_excursion.get();
+            if(!excursionDto.getDescription().equals("") && excursionDto.getDescription() != null){
+                excursion.setDescription(excursionDto.getDescription());
+            }
+            if(excursionDto.getPrice() != 0.0){
+                excursion.setPrice(excursionDto.getPrice());
+            }
+            if(!excursionDto.getName().equals("") && excursionDto.getName() !=null ){
+                excursion.setName(excursionDto.getName());
+            }
+            return HttpStatus.OK;
+        }else
+            throw new ResponseNotFoundException("excursion with name '" + excursionName + "' not found.");
+    }
+
+
+    public HttpStatus deleteExcursionByName(String excursionName){
+        Optional<ExcursionEntity> opt_excursion = excursionRepository.findByName(excursionName);
+        if(opt_excursion.isPresent()){
+            excursionRepository.delete(opt_excursion.get());
+            return HttpStatus.OK;
+        }else
+            throw new ResponseNotFoundException("excursion with name '" + excursionName + "' not found.");
+
+    }
 }

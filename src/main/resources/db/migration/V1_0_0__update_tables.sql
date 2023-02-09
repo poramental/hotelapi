@@ -1,5 +1,5 @@
 CREATE TABLE "hotels"(
-    id UUID  NOT NULL,
+    hotel_id UUID  NOT NULL,
     type VARCHAR(60) NOT NULL,
     description VARCHAR(255),
     address VARCHAR(100) NOT NULL,
@@ -34,12 +34,18 @@ CREATE TABLE "excursions"(
 );
 
 CREATE TABLE "services"(
-    id UUID PRIMARY KEY NOT NULL,
+    service_id UUID PRIMARY KEY NOT NULL,
     name VARCHAR(60) NOT NULL,
     description VARCHAR(255),
-    price numeric NOT NULL,
-    hotel_id UUID NOT NULL
+    price numeric NOT NULL
 
 
 );
 
+
+CREATE TABLE "services_hotels"(
+    hotels_hotel_id UUID,
+    services_service_id UUID,
+    CONSTRAINT id PRIMARY KEY (hotels_hotel_id,services_service_id)
+
+)
