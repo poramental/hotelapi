@@ -1,14 +1,8 @@
-
-springdoc:
-  swagger-ui:
-    path: /swagger-ui.html
-
-
 server:
   port: 5000
 
 spring:
   datasource:
-    url: jdbc:postgresql://192.168.99.100:5444/hotel-db
+    url: jdbc:postgresql://localhost:5444/hotel-db
     username: admin
     password: admin
